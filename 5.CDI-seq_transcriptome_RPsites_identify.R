@@ -70,55 +70,7 @@ vcf_combine_filter <- vcf_combine_filter %>%
 table(vcf_combine_filter$reactivity)
 
 ##########################################################################################################################
-# RNP-MaP: Identify reactive sites
-
-# Calculate σ, z-factor, and diff between experimental and background
-vcf_combine_filter$σ.x = sqrt(vcf_combine_filter$mutation.average)/sqrt(vcf_combine_filter$depth)
-vcf_combine_filter$σ.y = sqrt(vcf_combine_filter$BG.mutation.average)/sqrt(vcf_combine_filter$depthBG)
-vcf_combine_filter$z.factor = (1-((2.575*(vcf_combine_filter$σ.x + vcf_combine_filter$σ.y))/abs(vcf_combine_filter$mutation.average - vcf_combine_filter$BG.mutation.average)))
-vcf_combine_filter$diff = vcf_combine_filter$mutation.average/vcf_combine_filter$BG.mutation.average
-
-# Function to handle special values (remove NA and Inf)
-handle_special_values <- function(x) {
-  x[!is.na(x) & !is.infinite(x)]
-}
-
-# Calculate median and standard deviation of diff by gene, reference base, and strand
-summary_stats <- vcf_combine_filter %>%
-  group_by(GENE, Ref, STRAND) %>%
-  summarise(median_diff = median(handle_special_values(diff), na.rm = TRUE),
-            sd_diff = sd(handle_special_values(diff), na.rm = TRUE))
-
-# Assign empirical coefficients based on nucleotide and strand direction
-summary_stats <- summary_stats %>%
-  mutate(coe = case_when(
-    # Mapping for "+" strand
-    (Ref == "T" & STRAND == "+") ~ 0.59,
-    (Ref == "A" & STRAND == "+") ~ 0.29,
-    (Ref == "C" & STRAND == "+") ~ 0.93,
-    (Ref == "G" & STRAND == "+") ~ 0.78,
-    
-    # Mapping for "-" strand
-    (Ref == "A" & STRAND == "-") ~ 0.59,
-    (Ref == "T" & STRAND == "-") ~ 0.29,
-    (Ref == "G" & STRAND == "-") ~ 0.93,
-    (Ref == "C" & STRAND == "-") ~ 0.78
-  )) 
-
-# Calculate dynamic threshold for each nucleotide type
-summary_stats$NTthersh = summary_stats$median_diff + (summary_stats$coe * summary_stats$sd_diff)
-
-# Join thresholds back to original data
-vcf_combine_filter <- vcf_combine_filter %>%
-  left_join(summary_stats, by = c("GENE", "Ref", "STRAND"))
-
-# Determine if a site is reactive ("T") or not ("F")
-vcf_combine_filter$RPI_site <- with(vcf_combine_filter, ifelse(((RMR.1_Reads2 + RMR.2_Reads2) - (RMR.con.1_Reads2 - RMR.con.2_Reads2)) > 10 & z.factor > 0 & diff > NTthersh, "T", "F"))
-
-# Count number of RPI_site
-table(vcf_combine_filter$RPI_site)
-
-##########################################################################################################################
 # Save final results to CSV
 write.csv(vcf_combine_filter, "./STAR_shapeset_bam_withgeneinfo_hg38_ncbiRefSeq_transcript_withstrand_siteinfo.csv")
+
 
