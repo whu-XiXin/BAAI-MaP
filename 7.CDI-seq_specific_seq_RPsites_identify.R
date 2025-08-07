@@ -47,46 +47,6 @@ vcf <- vcf %>% filter(Chrom == gene_name)
 vcf <- vcf %>% filter((Reads1.x + Reads2.x) > 3000 & (Reads1.y + Reads2.y) > 3000)
 
 ##########################################################################################################################
-# SHAPE-MaP: Calculate reactivity coefficients
-
-# Calculate σ, z-factor, and diff between experimental and control
-vcf$σ.x = sqrt(vcf$mutation.rate.x)/sqrt(vcf$Reads1.x + vcf$Reads2.x)
-vcf$σ.y = sqrt(vcf$mutation.rate.y)/sqrt(vcf$Reads1.y + vcf$Reads2.y)
-vcf$z.factor = (1 - ((2.575 * (vcf$σ.x + vcf$σ.y)) / abs(vcf$mutation.rate.x - vcf$mutation.rate.y)))
-vcf$diff = vcf$mutation.rate.x / vcf$mutation.rate.y
-
-# Function to handle special values (remove NA and Inf)
-handle_special_values <- function(x) {
-  x[!is.na(x) & !is.infinite(x)]
-}
-
-# Group by reference base and summarize median and SD of diff
-summary_stats <- vcf %>%
-  group_by(Ref) %>%
-  summarise(
-    median_diff = median(handle_special_values(diff), na.rm = TRUE),
-    sd_diff = sd(handle_special_values(diff), na.rm = TRUE)
-  )
-
-# Note: Since the sequencing results are genome-aligned, the nucleotide-specific coefficients are complementary.
-# RNA: U=0.59, A=0.29, C=0.93, G=0.78
-# Genome alignment: A=0.59, T=0.29, G=0.93, C=0.78
-summary_stats$coe = c(0.29, 0.93, 0.78, 0.59) # Coefficients based on genomic mapping
-#summary_stats$coe = c(0.59, 0.78, 0.93, 0.29)
-# Calculate dynamic threshold
-summary_stats$NTthersh = summary_stats$median_diff + (summary_stats$coe * summary_stats$sd_diff)
-
-# Join thresholds back to main dataset
-vcf <- vcf %>%
-  left_join(summary_stats, by = "Ref")
-
-# Identify reactive sites ("T") or non-reactive sites ("F")
-vcf$RPI_site <- with(vcf, ifelse(Reads2.x - Reads2.y > 50 & z.factor > 0 & diff > NTthersh, "T", "F"))
-table(vcf$RPI_site)
-
-##########################################################################################################################
-# RNP-MaP: Identify reactive sites
-
 # Calculate delta mutation rate
 vcf$delta_mutation_rate = vcf$mutation.rate.x - vcf$mutation.rate.y
 vcf$delta_mutation_rate_rep1 = vcf$exp.mutation.rate.rep1 - vcf$con.mutation.rate.rep1
@@ -132,4 +92,5 @@ table(vcf$reactivity.level)
 
 ##########################################################################################################################
 # Save final results to CSV file
+
 write.csv(vcf, "./genename_siteinfo.csv")
