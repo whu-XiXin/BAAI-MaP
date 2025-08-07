@@ -32,8 +32,6 @@ vcf_combine_filter$depthBG = vcf_combine_filter$RMR.con.1_Reads1 + vcf_combine_f
 vcf_combine_filter$delta_depth = vcf_combine_filter$depth - vcf_combine_filter$depthBG
 
 ##########################################################################################################################
-# SHAPE-MaP: Calculate reactivity coefficients
-
 # Calculate mutation reactivity (experimental minus background)
 vcf_combine_filter$reactivity.mutation = vcf_combine_filter$mutation.average - vcf_combine_filter$BG.mutation.average
 vcf_combine_filter$reactivity.stderr = sqrt(vcf_combine_filter$mutation.sterr^2 + vcf_combine_filter$BG.mutation.sterr^2)
@@ -72,5 +70,6 @@ table(vcf_combine_filter$reactivity)
 ##########################################################################################################################
 # Save final results to CSV
 write.csv(vcf_combine_filter, "./STAR_shapeset_bam_withgeneinfo_hg38_ncbiRefSeq_transcript_withstrand_siteinfo.csv")
+
 
 
