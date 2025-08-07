@@ -8,10 +8,10 @@ Tools for analyzing data from the biochemical method CDI-seq to identify transcr
 Github: https://github.com/whu-XiXin/CDI-seq/
 -----------------------------------------
 
-### Data analysis process
+## Data analysis process
 ------------------------------------	
 
-#### For transcriptome data 
+### For transcriptome data 
 
 
 **Running 1.transcriptome_STARalign.sh**
@@ -34,7 +34,7 @@ python 2.vcf_mutation_merge.py  \
     -out ./vcf_data/CDI-2-total_merge_Shape_set.vcf
 ```
 
-**Running 3.vcf_merge_filter.py **
+**Running 3.vcf_merge_filter.py**
 
 ```
 python 3.vcf_merge_filter.py \
@@ -44,7 +44,7 @@ python 3.vcf_merge_filter.py \
          -d 100
 ```
 
-**Running 4.get_gene_info_for_vcf.py **
+**Running 4.get_gene_info_for_vcf.py**
 
 Before running 4.get_gene_info_for_vcf.py, please extract chr, gene start, gene end, gene name from reference genome gtf file on your own.
 
@@ -55,7 +55,7 @@ Before running 4.get_gene_info_for_vcf.py, please extract chr, gene start, gene 
         -o ./vcf_data/CDI-2-total_merge_Shape_set_filter_withgeneinfo.vcf
 ```
 
-**Runing 5.CDI-seq_transcriptome_RPsites_identify.R **
+**Runing 5.CDI-seq_transcriptome_RPsites_identify.R**
 
 Before runing 5.CDI-seq_transcriptome_RPsites_identify.R, please install R and R script dplyr on your own. We also recommend using Rstudio to run R scripts, as it is more convenient for modifying and debugging the code.
 
@@ -63,9 +63,9 @@ Before runing 5.CDI-seq_transcriptome_RPsites_identify.R, please install R and R
 Rscript 5.CDI-seq_transcriptome_RPsites_identify.R
 ```
 
-#### For specific transcript data
+### For specific transcript data
 
-**Runing 6.specific_gene_bowtie2align.sh **
+**Runing 6.specific_gene_bowtie2align.sh**
 
 Before running 6.specific_gene_bowtie2align.sh, please install fastp, seqkit, seqtk, bowtie2, varscan, samtools and other necessary software on your own. Then, use thebowtie2-build command to construct an index with the reference genome. And you need change SAMPLE_NAME and RAW_DIR in 6.specific_gene_bowtie2align.sh script.
 
@@ -73,7 +73,7 @@ Before running 6.specific_gene_bowtie2align.sh, please install fastp, seqkit, se
 bash 6.specific_gene_bowtie2align.sh
 ```
 
-**Runing 7.CDI-seq_specific_seq_RPsites_identify.R **
+**Runing 7.CDI-seq_specific_seq_RPsites_identify.R**
 
 Before runing 7.CDI-seq_specific_seq_RPsites_identify.R, please install R and R script dplyr on your own. We also recommend using Rstudio to run R scripts, as it is more convenient for modifying and debugging the code.
 
