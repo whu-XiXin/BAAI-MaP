@@ -1,7 +1,7 @@
 library(dplyr)
 
 # Read VCF file with gene annotations and strand information
-vcf_combine_filter <- read.table("./STAR_shapeset_bam_withgeneinfo_hg38_ncbiRefSeq_transcript_withstrand.vcf", sep="\t", header = TRUE)
+vcf_combine_filter <- read.table("./vcf_data/CDI-2-total_merge_Shape_set_filter_withgeneinfo.vcf", sep="\t", header = TRUE)
 
 # Remove variants not located within genes
 vcf_combine_filter <- vcf_combine_filter %>% filter(!is.na(GENE) & GENE != "")
@@ -69,7 +69,8 @@ table(vcf_combine_filter$reactivity)
 
 ##########################################################################################################################
 # Save final results to CSV
-write.csv(vcf_combine_filter, "./STAR_shapeset_bam_withgeneinfo_hg38_ncbiRefSeq_transcript_withstrand_siteinfo.csv")
+write.csv(vcf_combine_filter, "./vcf_data/CDI-2-total_RPsiteinfo.csv")
+
 
 
 
