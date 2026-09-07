@@ -1,11 +1,11 @@
-# CDI-seq
+# BAAI-MaP
 ----------------------------------------
-## Scripts for analysing CDI-seq data ##
+## Scripts for analysing BAAI-MaP data ##
 ----------------------------------------
 Tools for analyzing data from the biochemical method CDI-seq to identify transcriptome-wide or specific transcript RNA-protein interaction site.
 ----------------------------------------
 ### The link address:
-Github: https://github.com/whu-XiXin/CDI-seq/
+Github: https://github.com/whu-XiXin/BAAI-MaP/
 -----------------------------------------
 
 ## Data analysis process
