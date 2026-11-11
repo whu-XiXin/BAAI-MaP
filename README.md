@@ -55,12 +55,14 @@ Before running 4.get_gene_info_for_vcf.py, please extract chr, gene start, gene 
         -o ./vcf_data/CDI-2-total_merge_Shape_set_filter_withgeneinfo.vcf
 ```
 
-**Runing 5.CDI-seq_transcriptome_RPsites_identify.R**
-
-Before runing 5.CDI-seq_transcriptome_RPsites_identify.R, please install R and R script dplyr on your own. We also recommend using Rstudio to run R scripts, as it is more convenient for modifying and debugging the code.
+**Runing 5.calculate_reactivity.py**
 
 ```
-Rscript 5.CDI-seq_transcriptome_RPsites_identify.R
+python calculate_reactivity.py \
+    -i ./vcf_data/CDI-2-total_merge_Shape_set_filter_withgeneinfo.vcf \
+    -o ./data/CDI-2-total_reactivity.txt \
+    --treatment CDI-2-1 CDI-2-2 \
+    --control Total-con-1 Total-con-2
 ```
 
 ### For specific transcript data
